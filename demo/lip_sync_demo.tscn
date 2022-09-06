@@ -145,13 +145,11 @@ margin_left = 10.0
 margin_top = 10.0
 margin_right = -10.0
 margin_bottom = -10.0
-bbcode_enabled = true
-bbcode_text = "[b]Godot LipSync Demo[/b]
+text = "Godot LipSync Demo v0.0.0
 
-This is a placeholder for a proper about page."
-text = "Godot LipSync Demo
+The Godot LipSync Demo application allows for evaluating lip-sync performance against bundled audio, microphone input, and external audio files.
 
-This is a placeholder for a proper about page."
+In the future this tool will also support modifying the lip-sync training resources to better match specific speakers or age-groups."
 
 [connection signal="file_selected" from="AudioFileDialog" to="." method="_on_AudioFileDialog_file_selected"]
 
