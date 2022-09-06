@@ -71,6 +71,10 @@ lip_sync_path = NodePath("../../../../../../LipSync")
 [node name="Camera" type="Camera" parent="VBoxContainer/ViewportContainer/Viewport/Scene"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.4 )
 
+[node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/ViewportContainer/Viewport/Scene"]
+transform = Transform( 0.707107, -0.40558, 0.579228, 0, 0.819152, 0.573577, -0.707107, -0.40558, 0.579228, 0, 0, 0 )
+light_energy = 0.5
+
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 margin_top = 390.0
 margin_right = 1024.0
@@ -145,11 +149,9 @@ bbcode_enabled = true
 bbcode_text = "[b]Godot LipSync Demo[/b]
 
 This is a placeholder for a proper about page."
-text = "Godot LipSync Demo v0.0.0
+text = "Godot LipSync Demo
 
-This application demonstrates the Godot LipSync module and lets the user evaluate different audio clips and live microphone input.
-
-This tool will eventually support tuning the lip-sync training data for different accents or age-groups."
+This is a placeholder for a proper about page."
 
 [connection signal="file_selected" from="AudioFileDialog" to="." method="_on_AudioFileDialog_file_selected"]
 
