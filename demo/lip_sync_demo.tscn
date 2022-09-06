@@ -1,0 +1,156 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/head/LipSync_Head.gltf" type="PackedScene" id=1]
+[ext_resource path="res://demo/mouse_look_viewport.gd" type="Script" id=2]
+[ext_resource path="res://demo/audio_stream_player.gd" type="Script" id=3]
+[ext_resource path="res://addons/godot-lip-sync/talking_head.gd" type="Script" id=4]
+[ext_resource path="res://demo/lip_sync_demo.gd" type="Script" id=5]
+[ext_resource path="res://addons/godot-lip-sync/lip_sync.gd" type="Script" id=6]
+
+[node name="LipSyncDemo" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 5 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.14902, 0.172549, 0.231373, 1 )
+
+[node name="MenuBar" type="HBoxContainer" parent="."]
+margin_top = 5.0
+margin_right = 134.0
+margin_bottom = 20.0
+
+[node name="FileMenu" type="MenuButton" parent="MenuBar"]
+margin_right = 35.0
+margin_bottom = 20.0
+text = "File"
+
+[node name="AudioMenu" type="MenuButton" parent="MenuBar"]
+margin_left = 39.0
+margin_right = 88.0
+margin_bottom = 20.0
+focus_mode = 2
+text = "Audio"
+
+[node name="HelpMenu" type="MenuButton" parent="MenuBar"]
+margin_left = 92.0
+margin_right = 134.0
+margin_bottom = 20.0
+focus_mode = 2
+text = "Help"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 30.0
+
+[node name="ViewportContainer" type="ViewportContainer" parent="VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 386.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+script = ExtResource( 2 )
+
+[node name="Viewport" type="Viewport" parent="VBoxContainer/ViewportContainer"]
+size = Vector2( 1024, 386 )
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="Scene" type="Spatial" parent="VBoxContainer/ViewportContainer/Viewport"]
+
+[node name="LipSync_Head" parent="VBoxContainer/ViewportContainer/Viewport/Scene" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0 )
+
+[node name="Human_Head" parent="VBoxContainer/ViewportContainer/Viewport/Scene/LipSync_Head" index="0"]
+script = ExtResource( 4 )
+lip_sync_path = NodePath("../../../../../../LipSync")
+
+[node name="Camera" type="Camera" parent="VBoxContainer/ViewportContainer/Viewport/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.4 )
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
+margin_top = 390.0
+margin_right = 1024.0
+margin_bottom = 570.0
+rect_min_size = Vector2( 0, 180 )
+tab_align = 0
+
+[node name="Audio" type="Tabs" parent="VBoxContainer/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Viseme" type="Tabs" parent="VBoxContainer/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+bus = "Speech"
+script = ExtResource( 3 )
+
+[node name="LipSync" type="Node" parent="."]
+script = ExtResource( 6 )
+audio_bus_name = "Speech"
+add_microphone = false
+mute_audio = false
+
+[node name="AudioFileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -244.5
+margin_top = -127.0
+margin_right = 244.5
+margin_bottom = 127.0
+window_title = "Open a File"
+resizable = true
+mode = 0
+access = 2
+filters = PoolStringArray( "*.mp3; MP3 Files", "*.ogg; Ogg Files" )
+current_dir = "/Work/godot3/godot-lip-sync"
+current_path = "/Work/godot3/godot-lip-sync/"
+
+[node name="AboutDialog" type="WindowDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -100.0
+margin_right = 300.0
+margin_bottom = 100.0
+window_title = "About Godot LipSync Demo"
+resizable = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="AboutDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+bbcode_enabled = true
+bbcode_text = "[b]Godot LipSync Demo[/b]
+
+This is a placeholder for a proper about page."
+text = "Godot LipSync Demo v0.0.0
+
+This application demonstrates the Godot LipSync module and lets the user evaluate different audio clips and live microphone input.
+
+This tool will eventually support tuning the lip-sync training data for different accents or age-groups."
+
+[connection signal="file_selected" from="AudioFileDialog" to="." method="_on_AudioFileDialog_file_selected"]
+
+[editable path="VBoxContainer/ViewportContainer/Viewport/Scene/LipSync_Head"]

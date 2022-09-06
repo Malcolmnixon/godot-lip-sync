@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Alone_by_Edgar_Allan_Poe.ogg-e6dd606fdde64cf1e180edc60095b500.oggstr"
+
+[deps]
+
+source_file="res://assets/speeches/Alone_by_Edgar_Allan_Poe.ogg"
+dest_files=[ "res://.import/Alone_by_Edgar_Allan_Poe.ogg-e6dd606fdde64cf1e180edc60095b500.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0
