@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/The_Road_Not_Taken.ogg-1fe605d6a9cbb4a06773a4f3ecb274d7.oggstr"
+
+[deps]
+
+source_file="res://assets/speeches/The_Road_Not_Taken.ogg"
+dest_files=[ "res://.import/The_Road_Not_Taken.ogg-1fe605d6a9cbb4a06773a4f3ecb274d7.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

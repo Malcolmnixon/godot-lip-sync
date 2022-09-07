@@ -11,24 +11,13 @@ func _ready():
 	_speech_bus = AudioServer.get_bus_index("Speech")
 
 func play_microphone():
-	_play_stream(
-		AudioStreamMicrophone.new(),
-		true)
-	
-func play_microphone_loop():
-	_play_stream(
-		AudioStreamMicrophone.new(),
-		false)
-	
-func play_alone():
-	_play_stream(
-		load("res://assets/speeches/Alone_by_Edgar_Allan_Poe.ogg"),
-		false)
+	_play_stream(AudioStreamMicrophone.new(), true)
 
-func play_jabberwocky():
-	_play_stream(
-		load("res://assets/speeches/Jabberwocky-UK.ogg"),
-		false)
+func play_microphone_loop():
+	_play_stream(AudioStreamMicrophone.new(), false)
+
+func play_resource(name: String):
+	_play_stream(load(name), false)
 
 func play_file(file_name: String):
 	# Load the file

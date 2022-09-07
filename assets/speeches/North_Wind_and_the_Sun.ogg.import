@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/North_Wind_and_the_Sun.ogg-ce5262eb75ba71cbb5197ccf59d72972.oggstr"
+
+[deps]
+
+source_file="res://assets/speeches/North_Wind_and_the_Sun.ogg"
+dest_files=[ "res://.import/North_Wind_and_the_Sun.ogg-ce5262eb75ba71cbb5197ccf59d72972.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0
