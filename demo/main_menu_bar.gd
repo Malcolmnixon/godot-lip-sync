@@ -4,6 +4,7 @@ extends HBoxContainer
 signal menu_file_new
 signal menu_file_open
 signal menu_file_save
+signal menu_file_save_as
 signal menu_file_exit
 signal menu_audio_microphone
 signal menu_audio_microphone_loop
@@ -15,7 +16,8 @@ signal menu_help_about
 const FILE_NEW_ID := 100
 const FILE_OPEN_ID := 101
 const FILE_SAVE_ID := 102
-const FILE_EXIT_ID := 103
+const FILE_SAVE_AS_ID := 103
+const FILE_EXIT_ID := 104
 const AUDIO_MICROPHONE_ID := 210
 const AUDIO_MICROPHONE_LOOP_ID := 211
 const AUDIO_PLAY_NORTHWIND := 220
@@ -32,6 +34,7 @@ func _ready():
 	$FileMenu.get_popup().add_item("New", FILE_NEW_ID, KEY_N | KEY_MASK_CTRL)
 	$FileMenu.get_popup().add_item("Open", FILE_OPEN_ID, KEY_O | KEY_MASK_CTRL)
 	$FileMenu.get_popup().add_item("Save", FILE_SAVE_ID, KEY_S | KEY_MASK_CTRL)
+	$FileMenu.get_popup().add_item("Save As", FILE_SAVE_AS_ID, KEY_S | KEY_MASK_CTRL | KEY_MASK_ALT)
 	$FileMenu.get_popup().add_separator()
 	$FileMenu.get_popup().add_item("Exit", FILE_EXIT_ID, KEY_F4 | KEY_MASK_ALT)
 	$FileMenu.get_popup().connect("id_pressed", self, "_on_menu_id_pressed")
@@ -73,6 +76,9 @@ func _on_menu_id_pressed(id: int):
 
 		FILE_SAVE_ID:
 			emit_signal("menu_file_save")
+
+		FILE_SAVE_AS_ID:
+			emit_signal("menu_file_save_as")
 
 		FILE_EXIT_ID:
 			emit_signal("menu_file_exit")

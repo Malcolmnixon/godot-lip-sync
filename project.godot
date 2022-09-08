@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "LipSync",
 "language": "GDScript",
 "path": "res://addons/godot-lip-sync/lip_sync.gd"
+}, {
+"base": "Resource",
+"class": "LipSyncTraining",
+"language": "GDScript",
+"path": "res://addons/godot-lip-sync/lip_sync_training.gd"
 } ]
 _global_script_class_icons={
-"LipSync": ""
+"LipSync": "",
+"LipSyncTraining": ""
 }
 
 [application]

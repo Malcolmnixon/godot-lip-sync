@@ -129,17 +129,63 @@ audio_bus_name = "Speech"
 add_microphone = false
 mute_audio = false
 
+[node name="ConfirmProceedDialog" type="ConfirmationDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -250.0
+margin_top = -50.0
+margin_right = 250.0
+margin_bottom = 50.0
+dialog_text = "The current audio training resource data is modified. Do you wish to proceed and discard the changes?"
+dialog_autowrap = true
+
+[node name="LoadTrainingFileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -250.0
+margin_top = -150.0
+margin_right = 250.0
+margin_bottom = 150.0
+window_title = "Open Training Resource File"
+mode_overrides_title = false
+mode = 0
+access = 2
+filters = PoolStringArray( "*.tres; Resource Files" )
+current_dir = "/Work/godot3/godot-lip-sync"
+current_path = "/Work/godot3/godot-lip-sync/"
+
+[node name="SaveAsTrainingFileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -250.0
+margin_top = -150.0
+margin_right = 250.0
+margin_bottom = 150.0
+window_title = "Save Training Resource File As"
+mode_overrides_title = false
+access = 2
+filters = PoolStringArray( "*.tres; Resource Files" )
+current_dir = "/Work/godot3/godot-lip-sync"
+current_path = "/Work/godot3/godot-lip-sync/"
+
 [node name="AudioFileDialog" type="FileDialog" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -244.5
-margin_top = -127.0
-margin_right = 244.5
-margin_bottom = 127.0
-window_title = "Open a File"
+margin_left = -250.0
+margin_top = -150.0
+margin_right = 250.0
+margin_bottom = 150.0
+window_title = "Open Audio File"
 resizable = true
+mode_overrides_title = false
 mode = 0
 access = 2
 filters = PoolStringArray( "*.mp3; MP3 Files", "*.ogg; Ogg Files" )
@@ -171,6 +217,9 @@ The Godot LipSync Demo application allows for evaluating lip-sync performance ag
 
 In the future this tool will also support modifying the lip-sync training resources to better match specific speakers or age-groups."
 
+[connection signal="confirmed" from="ConfirmProceedDialog" to="." method="_on_ConfirmProceedDialog_confirmed"]
+[connection signal="file_selected" from="LoadTrainingFileDialog" to="." method="_on_LoadTrainingFileDialog_file_selected"]
+[connection signal="file_selected" from="SaveAsTrainingFileDialog" to="." method="_on_SaveAsTrainingFileDialog_file_selected"]
 [connection signal="file_selected" from="AudioFileDialog" to="." method="_on_AudioFileDialog_file_selected"]
 
 [editable path="HSplitContainer/VBoxContainer/ViewportContainer/Viewport/Scene/LipSync_Head"]
