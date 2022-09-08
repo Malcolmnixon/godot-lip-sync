@@ -10,14 +10,7 @@ enum CONFIRM_ACTION {
 }
 
 
-## Training file name
-var file_name := ""
 
-## Training file modified
-var file_modified := false
-
-## Training file data
-var file_data := LipSyncTraining.new()
 
 ## File action (after confirmation)
 var confirm_action: int = CONFIRM_ACTION.None
@@ -25,6 +18,9 @@ var confirm_action: int = CONFIRM_ACTION.None
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Connect file state changed
+	LipSyncGlobals.connect("file_changed", self, "_on_file_changed")
+	
 	# Connect main menu signals
 	$MainMenuBar.connect("menu_file_new", self, "_on_file_new")
 	$MainMenuBar.connect("menu_file_open", self, "_on_file_open")
@@ -38,23 +34,23 @@ func _ready():
 	$MainMenuBar.connect("menu_help_about", self, "_on_help_about")
 
 	# Update the window title
-	_update_window_title()
+	_on_file_changed()
 
 
 ## Handler for user selecting file/new menu item
 func _on_file_new():
-	if file_modified:
+	if LipSyncGlobals.file_modified:
 		# Confirm data-loss before proceeding
 		confirm_action = CONFIRM_ACTION.New
 		$ConfirmProceedDialog.popup()
 	else:
 		# Create new file
-		_do_file_new()
+		LipSyncGlobals.new_file()
 
 
 ## Handler for user selecting file/open menu item
 func _on_file_open():
-	if file_modified:
+	if LipSyncGlobals.file_modified:
 		# Confirm data-loss before proceeding
 		confirm_action = CONFIRM_ACTION.Open
 		$ConfirmProceedDialog.popup()
@@ -65,12 +61,12 @@ func _on_file_open():
 
 ## Handler for user selecting file/save menu item
 func _on_file_save():
-	if file_name == "":
+	if LipSyncGlobals.file_name == "":
 		# No file-name - Show save-as popup
 		$SaveAsTrainingFileDialog.popup()
 	else:
 		# Save the file
-		_do_file_save()
+		LipSyncGlobals.save_file()
 
 
 ## Handler for user selecting file/save-as menu item
@@ -81,7 +77,7 @@ func _on_file_save_as():
 
 ## Handler for user selecting file/exit menu item
 func _on_file_exit():
-	if file_modified:
+	if LipSyncGlobals.file_modified:
 		# Confirm data-loss before proceeding
 		confirm_action = CONFIRM_ACTION.Exit
 		$ConfirmProceedDialog.popup()
@@ -120,7 +116,7 @@ func _on_ConfirmProceedDialog_confirmed():
 	match confirm_action:
 		CONFIRM_ACTION.New:
 			# User confirms new - do new file
-			_do_file_new()
+			LipSyncGlobals.new_file()
 		
 		CONFIRM_ACTION.Open:
 			# User confirms open - show load dialog
@@ -133,23 +129,12 @@ func _on_ConfirmProceedDialog_confirmed():
 
 ## User has confirmed file in load dialog
 func _on_LoadTrainingFileDialog_file_selected(path):
-	# Change the file name and load the file
-	file_name = path
-	file_data = ResourceLoader.load(path)
-	file_modified = false
-
-	# Update the window title
-	_update_window_title()
+	LipSyncGlobals.load_file(path)
 
 
 ## User has confirmed file in save dialog
 func _on_SaveAsTrainingFileDialog_file_selected(path):
-	# Change the file name and save the file
-	file_name = path
-	_do_file_save()
-
-	# Update the window title
-	_update_window_title()
+	LipSyncGlobals.save_file_as(path)
 
 
 ## User has selected file in audio file dialog
@@ -157,35 +142,6 @@ func _on_AudioFileDialog_file_selected(path):
 	$AudioStreamPlayer.play_file(path)
 
 
-## Perform the file/new action
-func _do_file_new():
-	# Clear the data
-	file_name = ""
-	file_data = LipSyncTraining.new()
-	file_modified = false
-
-	# Update the window title
-	_update_window_title()
-
-
-## Perform the file/save action
-func _do_file_save():
-	# Save the resource
-	ResourceSaver.save(file_name, file_data)
-	file_modified = false
-
-	# Update the window title
-	_update_window_title()
-
-
-## Update the window title to match the file state
-func _update_window_title():
-	# Pick a display name
-	var display_name := "unnamed" if file_name == "" else file_name
-
-	# Add modified flag
-	if file_modified:
-		display_name = "*" + display_name
-
-	# Set window title
-	OS.set_window_title("Godot LipSync Training: " + display_name)
+## Handle file state changed
+func _on_file_changed():
+	OS.set_window_title("Godot LipSync Training: " + LipSyncGlobals.file_display_name())
