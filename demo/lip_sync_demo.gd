@@ -18,9 +18,12 @@ var confirm_action: int = CONFIRM_ACTION.None
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Disable default quit (so we can warn about data loss)
+	get_tree().set_auto_accept_quit(false)
+
 	# Connect file state changed
-	LipSyncGlobals.connect("file_changed", self, "_on_file_changed")
-	
+	LipSyncGlobals.connect("file_state_changed", self, "_on_file_state_changed")
+
 	# Connect main menu signals
 	$MainMenuBar.connect("menu_file_new", self, "_on_file_new")
 	$MainMenuBar.connect("menu_file_open", self, "_on_file_open")
@@ -34,7 +37,13 @@ func _ready():
 	$MainMenuBar.connect("menu_help_about", self, "_on_help_about")
 
 	# Update the window title
-	_on_file_changed()
+	_on_file_state_changed()
+
+
+## Handle for user trying to close application
+func _notification(what):
+	if what == NOTIFICATION_WM_QUIT_REQUEST:
+		_on_file_exit()
 
 
 ## Handler for user selecting file/new menu item
@@ -143,5 +152,5 @@ func _on_AudioFileDialog_file_selected(path):
 
 
 ## Handle file state changed
-func _on_file_changed():
+func _on_file_state_changed():
 	OS.set_window_title("Godot LipSync Training: " + LipSyncGlobals.file_display_name())

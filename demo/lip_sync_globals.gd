@@ -1,8 +1,11 @@
 extends Node
 
 
-## Signal emitted when the file state changes
-signal file_changed
+## Signal emitted when the file state changes (update main window)
+signal file_state_changed()
+
+## Signal emitted when the file data changes (update controls
+signal file_data_changed(cause)
 
 
 ## Training file name
@@ -15,16 +18,30 @@ var file_modified := false
 var file_data := LipSyncTraining.new()
 
 
+## Report the training data has been modified
+func set_modified(cause):
+	# Report the data changed
+	emit_signal("file_data_changed", cause)
+
+	# Report the state changed (to modified)
+	if not file_modified:
+		file_modified = true
+		emit_signal("file_state_changed")
+
+
+## Switch to a new training file
 func new_file():
 	# Clear the data
 	file_name = ""
 	file_data = LipSyncTraining.new()
 	file_modified = false
 
-	# Report file changed
-	emit_signal("file_changed")
+	# Report changes
+	emit_signal("file_state_changed")
+	emit_signal("file_data_changed", "new")
 
 
+## Load a training data file
 func load_file(path: String):
 	# Load the data
 	file_name = path
@@ -32,24 +49,28 @@ func load_file(path: String):
 	file_modified = false
 
 	# Report file changed
-	emit_signal("file_changed")
+	emit_signal("file_state_changed")
+	emit_signal("file_data_changed", "load")
 
 
+## Save the training data file to the current file-name
 func save_file():
 	# Save the resource
 	ResourceSaver.save(file_name, file_data)
 	file_modified = false
 
 	# Report file changed
-	emit_signal("file_changed")
+	emit_signal("file_state_changed")
 
 
+## Save the training data file to a new file-name
 func save_file_as(path: String):
 	# Set the file name and save
 	file_name = path
 	save_file()
 
 
+## Get the user display name for the training data
 func file_display_name() -> String:
 		# Pick a display name
 	var display_name := "unnamed" if file_name == "" else file_name
