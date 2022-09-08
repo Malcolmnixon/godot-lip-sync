@@ -2,13 +2,19 @@ extends AudioStreamPlayer
 
 
 
-var _speech_bus: int
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Get the speech audio bus
-	_speech_bus = AudioServer.get_bus_index("Speech")
+	var bus := AudioServer.get_bus_index("Speech")
+	LipSyncGlobals.speech_bus = bus
+
+	# Get the speech spectrum analyzer
+	for i in AudioServer.get_bus_effect_count(bus):
+		var effect := AudioServer.get_bus_effect(bus, i) as AudioEffectSpectrumAnalyzer
+		if effect:
+			LipSyncGlobals.speech_spectrum = AudioServer.get_bus_effect_instance(bus, i)
+			break
+
 
 func play_microphone():
 	_play_stream(AudioStreamMicrophone.new(), true)
@@ -44,7 +50,7 @@ func _play_stream(audio_stream: AudioStream, mute_bus: bool):
 
 	# Set the stream and bus mute
 	stream = audio_stream
-	AudioServer.set_bus_mute(_speech_bus, mute_bus)
+	AudioServer.set_bus_mute(LipSyncGlobals.speech_bus, mute_bus)
 	
 	# Play the stream
 	play()

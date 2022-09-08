@@ -17,6 +17,12 @@ var file_modified := false
 ## Training file data
 var file_data := LipSyncTraining.new()
 
+## Speech audio bus
+var speech_bus : int
+
+## Speech spectrum analyzer
+var speech_spectrum: AudioEffectSpectrumAnalyzerInstance
+
 
 ## Report the training data has been modified
 func set_modified(cause):

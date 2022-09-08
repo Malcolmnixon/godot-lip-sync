@@ -65,9 +65,10 @@ func _on_add_fingerprint(phoneme_node: TreeItem):
 	# Get the phoneme
 	var phoneme: int = phoneme_node.get_metadata(0)
 
-	# TODO: Construct the fingerprint
+	# Construct the fingerprint from the current audio spectrum
 	var fingerprint := LipSyncFingerprint.new()
 	fingerprint.description = "unnamed"
+	fingerprint.populate(LipSyncGlobals.speech_spectrum)
 
 	# If necessary, construct phoneme entry in training data
 	if not phoneme in LipSyncGlobals.file_data.training:
@@ -94,6 +95,9 @@ func _on_record_fingerprint(fingerprint_node: TreeItem):
 	# Get the phoneme and fingerprint
 	var phoneme: int = fingerprint_node.get_metadata(0)
 	var fingerprint: LipSyncFingerprint = fingerprint_node.get_metadata(1)
+
+	# Update the fingerprint from the current audio spectrum
+	fingerprint.populate(LipSyncGlobals.speech_spectrum)
 
 	# Report modified by tree manipulation
 	LipSyncGlobals.set_modified("tree")
