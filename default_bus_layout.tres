@@ -2,8 +2,7 @@
 
 [sub_resource type="AudioEffectSpectrumAnalyzer" id=2]
 resource_name = "SpectrumAnalyzer"
-buffer_length = 0.1
-fft_size = 1
+buffer_length = 1.0
 
 [resource]
 bus/1/name = "Speech"

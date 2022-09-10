@@ -34,6 +34,7 @@ func _ready():
 	$MainMenuBar.connect("menu_audio_microphone_loop", self, "_on_audio_microphone_loop")
 	$MainMenuBar.connect("menu_audio_play_resource", self, "_on_audio_play_resource")
 	$MainMenuBar.connect("menu_audio_play_file", self, "_on_audio_play_file")
+	$MainMenuBar.connect("menu_audio_stop", self, "_on_audio_stop")
 	$MainMenuBar.connect("menu_help_about", self, "_on_help_about")
 
 	# Update the window title
@@ -113,6 +114,11 @@ func _on_audio_play_resource(name: String):
 ## Handler for user selecting audio/play/file menu item
 func _on_audio_play_file():
 	$AudioFileDialog.popup()
+
+
+## Handler for user selecting audio/stop menu item
+func _on_audio_stop():
+	$AudioStreamPlayer.stop()
 
 
 ## Handler for user selecting help/about

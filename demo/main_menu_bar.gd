@@ -10,6 +10,7 @@ signal menu_audio_microphone
 signal menu_audio_microphone_loop
 signal menu_audio_play_resource(name)
 signal menu_audio_play_file
+signal menu_audio_stop
 signal menu_help_about
 
 # Menu IDs
@@ -25,6 +26,7 @@ const AUDIO_PLAY_ALONE := 221
 const AUDIO_PLAY_JABBERWOCKY := 222
 const AUDIO_PLAY_ROAD := 223
 const AUDIO_PLAY_FILE := 224
+const AUDIO_STOP := 230
 const HELP_ABOUT := 300
 
 
@@ -42,8 +44,8 @@ func _ready():
 	# Add microphone sub-menu to audio menu
 	var microphone_menu = PopupMenu.new()
 	microphone_menu.name = "microphone_menu"
-	microphone_menu.add_item("Listen", AUDIO_MICROPHONE_ID, KEY_M | KEY_MASK_CTRL)
-	microphone_menu.add_item("Loop-back", AUDIO_MICROPHONE_LOOP_ID, KEY_M | KEY_MASK_CTRL | KEY_MASK_SHIFT)
+	microphone_menu.add_item("Listen", AUDIO_MICROPHONE_ID, KEY_M | KEY_MASK_ALT)
+	microphone_menu.add_item("Loop-back", AUDIO_MICROPHONE_LOOP_ID, KEY_M | KEY_MASK_ALT | KEY_MASK_SHIFT)
 	microphone_menu.connect("id_pressed", self, "_on_menu_id_pressed")
 	$AudioMenu.get_popup().add_child(microphone_menu)
 	$AudioMenu.get_popup().add_submenu_item("Microphone", "microphone_menu")
@@ -51,14 +53,15 @@ func _ready():
 	# Add play sub-menu to audio menu
 	var play_menu = PopupMenu.new()
 	play_menu.name = "play_menu"
-	play_menu.add_item("North Wind", AUDIO_PLAY_NORTHWIND, KEY_1 | KEY_MASK_CTRL)
-	play_menu.add_item("Alone", AUDIO_PLAY_ALONE, KEY_2 | KEY_MASK_CTRL)
-	play_menu.add_item("Jabberwocky", AUDIO_PLAY_JABBERWOCKY, KEY_3 | KEY_MASK_CTRL)
-	play_menu.add_item("Road", AUDIO_PLAY_ROAD, KEY_4 | KEY_MASK_CTRL)
-	play_menu.add_item("Custom File...", AUDIO_PLAY_FILE, KEY_F | KEY_MASK_CTRL)
+	play_menu.add_item("North Wind", AUDIO_PLAY_NORTHWIND, KEY_1 | KEY_MASK_ALT)
+	play_menu.add_item("Alone", AUDIO_PLAY_ALONE, KEY_2 | KEY_MASK_ALT)
+	play_menu.add_item("Jabberwocky", AUDIO_PLAY_JABBERWOCKY, KEY_3 | KEY_MASK_ALT)
+	play_menu.add_item("Road", AUDIO_PLAY_ROAD, KEY_4 | KEY_MASK_ALT)
+	play_menu.add_item("Custom File...", AUDIO_PLAY_FILE, KEY_F | KEY_MASK_ALT)
 	play_menu.connect("id_pressed", self, "_on_menu_id_pressed")
 	$AudioMenu.get_popup().add_child(play_menu)
 	$AudioMenu.get_popup().add_submenu_item("Play", "play_menu")
+	$AudioMenu.get_popup().add_item("Stop", AUDIO_STOP, KEY_S | KEY_MASK_ALT)
 	$AudioMenu.get_popup().connect("id_pressed", self, "_on_menu_id_pressed")
 
 	# Populate help menu
@@ -111,6 +114,9 @@ func _on_menu_id_pressed(id: int):
 
 		AUDIO_PLAY_FILE:
 			emit_signal("menu_audio_play_file")
+
+		AUDIO_STOP:
+			emit_signal("menu_audio_stop")
 
 		HELP_ABOUT:
 			emit_signal("menu_help_about")

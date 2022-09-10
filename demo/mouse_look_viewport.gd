@@ -14,6 +14,10 @@ func _ready():
 
 
 func _input(event):
+	# Skip if mouse isn't over window
+	if not _mouse_over:
+		return
+
 	var update := false
 
 	# Handle button events
@@ -21,7 +25,7 @@ func _input(event):
 	if button:
 		# Handle left-button-drag capture and release
 		if button.button_index == BUTTON_LEFT:
-			if button.is_pressed() and _mouse_over:
+			if button.is_pressed():
 				_looking = true
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 			else:

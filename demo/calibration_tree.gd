@@ -1,3 +1,4 @@
+class_name CalibrationTree
 extends Tree
 
 
@@ -9,12 +10,29 @@ const BUTTON_DELETE := 3
 
 # Phoneme descriptions
 const phoneme_descriptions = {
-	LipSyncTraining.PHONEME.PHONEME_TS: "Phoneme [tS] (CHeck, CHoose)",
-	LipSyncTraining.PHONEME.PHONEME_DZ: "Phoneme [dZ] (Job, aGe)",
-	LipSyncTraining.PHONEME.PHONEME_SH: "Phoneme [S] (Job, aGe)",
-	LipSyncTraining.PHONEME.PHONEME_T: "Phoneme [t] (Take, haT)",
-	LipSyncTraining.PHONEME.PHONEME_D: "Phoneme [d] (Day, haD)",
-	LipSyncTraining.PHONEME.PHONEME_E: "Phoneme [e] (Ever, bEd)",
+	Phonemes.PHONEME.PHONEME_TS: "Phoneme [tS] (CHeck, CHoose)",
+	Phonemes.PHONEME.PHONEME_DZ: "Phoneme [dZ] (Job, aGe)",
+	Phonemes.PHONEME.PHONEME_SH: "Phoneme [S] (SHe, puSH, SHeep)",
+	Phonemes.PHONEME.PHONEME_T:  "Phoneme [t] (Take, haT)",
+	Phonemes.PHONEME.PHONEME_D:  "Phoneme [d] (Day, haD)",
+	Phonemes.PHONEME.PHONEME_E:  "Phoneme [e] (Ever, bEd)",
+	Phonemes.PHONEME.PHONEME_F:  "Phoneme [f] (Fan, Five)",
+	Phonemes.PHONEME.PHONEME_V:  "Phoneme [v] (Van, Vest)",
+	Phonemes.PHONEME.PHONEME_I:  "Phoneme [I] (fIx, offIce, kIt)",
+	Phonemes.PHONEME.PHONEME_O:  "Phoneme [O] (Otter, stOp, nOt)",
+	Phonemes.PHONEME.PHONEME_P:  "Phoneme [p] (Pat, Put, Pack)",
+	Phonemes.PHONEME.PHONEME_B:  "Phoneme [b] (Bat, tuBe, Bed)",
+	Phonemes.PHONEME.PHONEME_M:  "Phoneme [m] (Mat, froM, Mouse)",
+	Phonemes.PHONEME.PHONEME_R:  "Phoneme [r] (Red, fRom, Ram)",
+	Phonemes.PHONEME.PHONEME_S:  "Phoneme [s] (Sir, See, Seem)",
+	Phonemes.PHONEME.PHONEME_Z:  "Phoneme [z] (aS, hiS, Zoo)",
+	Phonemes.PHONEME.PHONEME_TH: "Phoneme [T] (THink, THat, THin)",
+	Phonemes.PHONEME.PHONEME_OU: "Phoneme [u] (tOO, feW, bOOm)",
+	Phonemes.PHONEME.PHONEME_A:  "Phoneme [A] (cAr, Art, fAther)",
+	Phonemes.PHONEME.PHONEME_K:  "Phoneme [k] (Call, weeK, sCat)",
+	Phonemes.PHONEME.PHONEME_G:  "Phoneme [g] (Gas, aGo, Game)",
+	Phonemes.PHONEME.PHONEME_N:  "Phoneme [n] (Not, aNd, Nap)",
+	Phonemes.PHONEME.PHONEME_L:  "Phoneme [l] (Lot, chiLd, Lay)",
 }
 
 
@@ -161,7 +179,7 @@ func _populate_tree():
 	var root = create_item()
 
 	# Iterate over all possible phonemes
-	for phoneme in LipSyncTraining.PHONEME.COUNT:
+	for phoneme in Phonemes.PHONEME.COUNT:
 		# Skip unknown phonemes
 		if not phoneme in phoneme_descriptions:
 			continue
@@ -170,7 +188,7 @@ func _populate_tree():
 		var phoneme_node = create_item(root, phoneme)
 		phoneme_node.set_text(0, phoneme_descriptions[phoneme])
 		phoneme_node.add_button(1, plus_icon, BUTTON_ADD)
-		phoneme_node.set_selectable(0, false)
+		phoneme_node.set_selectable(0, true)
 		phoneme_node.set_metadata(0, phoneme)
 
 		# Skip if no fingerprints in training data

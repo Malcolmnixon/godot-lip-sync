@@ -23,7 +23,8 @@ func _process(delta: float):
 	hist_max = max(hist_max, max_value)
 	
 	var max_scale = 1.0 / hist_max
+	#var max_scale = 0.1
 
 	for i in LipSyncFingerprint.BANDS_COUNT:
-		var bar: TextureProgress = $HBoxContainer.get_child(i)
+		var bar: TextureProgress = $FingerprintBars.get_child(i)
 		bar.value = _fingerprint.values[i] * max_scale
