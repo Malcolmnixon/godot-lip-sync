@@ -8,6 +8,25 @@ const BUTTON_RECORD := 2
 const BUTTON_DELETE := 3
 
 
+
+# Viseme descriptions
+const viseme_descriptions = {
+	Visemes.VISEME.VISEME_CH: "Viseme CH",
+	Visemes.VISEME.VISEME_DD: "Viseme DD",
+	Visemes.VISEME.VISEME_E: "Viseme E",
+	Visemes.VISEME.VISEME_FF: "Viseme FF",
+	Visemes.VISEME.VISEME_I: "Viseme I",
+	Visemes.VISEME.VISEME_O: "Viseme O",
+	Visemes.VISEME.VISEME_PP: "Viseme PP",
+	Visemes.VISEME.VISEME_RR: "Viseme RR",
+	Visemes.VISEME.VISEME_SS: "Viseme SS",
+	Visemes.VISEME.VISEME_TH: "Viseme TH",
+	Visemes.VISEME.VISEME_U: "Viseme U",
+	Visemes.VISEME.VISEME_AA: "Viseme AA",
+	Visemes.VISEME.VISEME_KK: "Viseme KK",
+	Visemes.VISEME.VISEME_NN: "Viseme NN",
+}
+
 # Phoneme descriptions
 const phoneme_descriptions = {
 	Phonemes.PHONEME.PHONEME_TS: "Phoneme [tS] (CHeck, CHoose)",
@@ -80,8 +99,9 @@ func _on_item_edited():
 
 ## Handle add button pressed on phoneme node
 func _on_add_fingerprint(phoneme_node: TreeItem):
-	# Get the phoneme
-	var phoneme: int = phoneme_node.get_metadata(0)
+	# Get the viseme/phoneme
+	var viseme: int = phoneme_node.get_metadata(0)[0]
+	var phoneme: int = phoneme_node.get_metadata(0)[1]
 
 	# Construct the fingerprint from the current audio spectrum
 	var fingerprint := LipSyncFingerprint.new()
@@ -101,17 +121,20 @@ func _on_add_fingerprint(phoneme_node: TreeItem):
 	fingerprint_node.add_button(1, microphone_icon, BUTTON_RECORD)
 	fingerprint_node.add_button(1, delete_icon, BUTTON_DELETE)
 	fingerprint_node.set_editable(0, true)
-	fingerprint_node.set_metadata(0, phoneme)
+	fingerprint_node.set_metadata(0, [viseme, phoneme])
 	fingerprint_node.set_metadata(1, fingerprint)
 
 	# Report modified by tree manipulation
 	LipSyncGlobals.set_modified("tree")
 
+	# Select the new fingerprint
+	fingerprint_node.select(0)
+
 
 ## Handle record button pressed on fingerprint node
 func _on_record_fingerprint(fingerprint_node: TreeItem):
 	# Get the phoneme and fingerprint
-	var phoneme: int = fingerprint_node.get_metadata(0)
+	var phoneme: int = fingerprint_node.get_metadata(0)[1]
 	var fingerprint: LipSyncFingerprint = fingerprint_node.get_metadata(1)
 
 	# Update the fingerprint from the current audio spectrum
@@ -120,11 +143,14 @@ func _on_record_fingerprint(fingerprint_node: TreeItem):
 	# Report modified by tree manipulation
 	LipSyncGlobals.set_modified("tree")
 
+	# Select the updated fingerprint
+	fingerprint_node.select(0)
+
 
 ## Handle delete button pressed on fingerprint node
 func _on_delete_fingerprint(fingerprint_node: TreeItem):
 	# Get the phoneme and fingerprint
-	var phoneme: int = fingerprint_node.get_metadata(0)
+	var phoneme: int = fingerprint_node.get_metadata(0)[1]
 	var fingerprint: LipSyncFingerprint = fingerprint_node.get_metadata(1)
 
 	# Get the array of fingerprints in the training data
@@ -162,8 +188,8 @@ func _on_fingerprint_edited(fingerprint_node: TreeItem):
 
 ## Handle changes to the file data
 func _on_file_data_changed(cause):
-	# Skip if we caused the change
-	if cause == "tree":
+	# Skip if change came from us or the inspector
+	if cause == "tree" or cause == "inspector":
 		return
 
 	# Update the tree to show the change
@@ -178,29 +204,39 @@ func _populate_tree():
 	# Create the root item
 	var root = create_item()
 
-	# Iterate over all possible phonemes
-	for phoneme in Phonemes.PHONEME.COUNT:
-		# Skip unknown phonemes
-		if not phoneme in phoneme_descriptions:
+	# Iterate over all possible visemes:
+	for viseme in Visemes.VISEME.COUNT:
+		# Skip visemes without descriptions
+		if not viseme in viseme_descriptions:
 			continue
 
-		# Construct the phoneme node
-		var phoneme_node = create_item(root, phoneme)
-		phoneme_node.set_text(0, phoneme_descriptions[phoneme])
-		phoneme_node.add_button(1, plus_icon, BUTTON_ADD)
-		phoneme_node.set_selectable(0, true)
-		phoneme_node.set_metadata(0, phoneme)
+		# Construct the viseme node
+		var viseme_node = create_item(root, viseme)
+		viseme_node.set_text(0, viseme_descriptions[viseme])
+		viseme_node.set_metadata(0, [viseme, -1])
 
-		# Skip if no fingerprints in training data
-		if not phoneme in LipSyncGlobals.file_data.training:
-			continue
+		# Iterate over phonemes in viseme
+		for phoneme in Visemes.VISEME_PHONEME_MAP[viseme]:
+			# Skip undocumented phonemes
+			if not phoneme in phoneme_descriptions:
+				continue
 
-		# Add all fingerprints
-		for fingerprint in LipSyncGlobals.file_data.training[phoneme]:
-			var fingerprint_node = create_item(phoneme_node)
-			fingerprint_node.set_text(0, fingerprint.description)
-			fingerprint_node.add_button(1, microphone_icon, BUTTON_RECORD)
-			fingerprint_node.add_button(1, delete_icon, BUTTON_DELETE)
-			fingerprint_node.set_editable(0, true)
-			fingerprint_node.set_metadata(0, phoneme)
-			fingerprint_node.set_metadata(1, fingerprint)
+			# Construct the phoneme node
+			var phoneme_node = create_item(viseme_node, phoneme)
+			phoneme_node.set_text(0, phoneme_descriptions[phoneme])
+			phoneme_node.add_button(1, plus_icon, BUTTON_ADD)
+			phoneme_node.set_metadata(0, [viseme, phoneme])
+
+			# Skip if no fingerprints in training data
+			if not phoneme in LipSyncGlobals.file_data.training:
+				continue
+
+			# Add all fingerprints
+			for fingerprint in LipSyncGlobals.file_data.training[phoneme]:
+				var fingerprint_node = create_item(phoneme_node)
+				fingerprint_node.set_text(0, fingerprint.description)
+				fingerprint_node.add_button(1, microphone_icon, BUTTON_RECORD)
+				fingerprint_node.add_button(1, delete_icon, BUTTON_DELETE)
+				fingerprint_node.set_editable(0, true)
+				fingerprint_node.set_metadata(0, [viseme, phoneme])
+				fingerprint_node.set_metadata(1, fingerprint)

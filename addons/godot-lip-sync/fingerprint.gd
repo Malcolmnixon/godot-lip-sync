@@ -24,7 +24,7 @@ const BANDS_RANGE := [
 	[1298.0, 1662.0, 1480.0],
 	[1416.0, 1792.0, 1604.0],
 	[1538.0, 1924.0, 1731.0],
-	[1662.0, 2060.0, 1861.0],
+	[1662.0, 4000.0, 2831.0],
 ]
 
 ## Count of frequency bands
@@ -47,7 +47,7 @@ var values: Array = [
 ## Populate this fingerprint from a spectrum analyzer instance
 func populate(spectrum: AudioEffectSpectrumAnalyzerInstance):
 	# Populate values with energy
-	var energy_sum := 0.0
+	var energy_max := 0.0
 	for i in BANDS_COUNT:
 		var from_hz: float = BANDS_RANGE[i][0]
 		var to_hz: float = BANDS_RANGE[i][1]
@@ -55,11 +55,10 @@ func populate(spectrum: AudioEffectSpectrumAnalyzerInstance):
 		var magnitude := spectrum.get_magnitude_for_frequency_range(from_hz, to_hz, AudioEffectSpectrumAnalyzerInstance.MAGNITUDE_AVERAGE)
 		var e := magnitude.length() * center_hz
 		values[i] = e
-		energy_sum += e
+		energy_max = max(energy_max, e)
 
 	# Calculate fingerprint
-	var energy_avg := energy_sum / BANDS_COUNT
-	var energy_scale := 0.0 if energy_avg <= SILENCE else 1.0 / energy_avg
+	var energy_scale := 0.0 if energy_max <= SILENCE else 1.0 / energy_max
 	for i in BANDS_COUNT:
 		values[i] *= energy_scale
 

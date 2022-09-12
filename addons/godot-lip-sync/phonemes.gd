@@ -31,11 +31,11 @@ enum PHONEME {
 	PHONEME_F = 6,
 
 	## Voiced labiodental fricative [v]
-	## Van, Vest
+	## VafIx, offIce, kItn, Vest
 	PHONEME_V = 7,
 
 	## Near-close front unrounded vowel [I]
-	## fIx, offIce, kIt
+	## 
 	PHONEME_I = 8,
 
 	## Open-mid back rounded vowel [O]
@@ -97,3 +97,4 @@ enum PHONEME {
 	## Count of phonemes
 	COUNT = 23
 }
+

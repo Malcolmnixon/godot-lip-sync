@@ -33,13 +33,19 @@ _global_script_classes=[ {
 "class": "Phonemes",
 "language": "GDScript",
 "path": "res://addons/godot-lip-sync/phonemes.gd"
+}, {
+"base": "Reference",
+"class": "Visemes",
+"language": "GDScript",
+"path": "res://addons/godot-lip-sync/visemes.gd"
 } ]
 _global_script_class_icons={
 "CalibrationTree": "",
 "LipSync": "",
 "LipSyncFingerprint": "",
 "LipSyncTraining": "",
-"Phonemes": ""
+"Phonemes": "",
+"Visemes": ""
 }
 
 [application]

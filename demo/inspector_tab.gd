@@ -1,8 +1,24 @@
 extends Tabs
 
+const VISEME_DESCRIPTIONS := {
+Visemes.VISEME.VISEME_CH: "Viseme CH",
+Visemes.VISEME.VISEME_DD: "Viseme DD",
+Visemes.VISEME.VISEME_E: "Viseme E",
+Visemes.VISEME.VISEME_FF: "Viseme FF",
+Visemes.VISEME.VISEME_I: "Viseme I",
+Visemes.VISEME.VISEME_O: "Viseme O",
+Visemes.VISEME.VISEME_PP: "Viseme PP",
+Visemes.VISEME.VISEME_RR: "Viseme RR",
+Visemes.VISEME.VISEME_SS: "Viseme SS",
+Visemes.VISEME.VISEME_TH: "Viseme TH",
+Visemes.VISEME.VISEME_U: "Viseme U",
+Visemes.VISEME.VISEME_AA: "Viseme aa",
+Visemes.VISEME.VISEME_KK: "Viseme kk",
+Visemes.VISEME.VISEME_NN: "Viseme nn",
+}
 
 ## Description of phonemes
-const DESCRIPTIONS := {
+const PHONEME_DESCRIPTIONS := {
 ## Description of the [tS] phoneme.
 Phonemes.PHONEME.PHONEME_TS: 
 """Voiceless postalveolar affricate [tS]
@@ -159,6 +175,9 @@ This phoneme is the L sound in Lot, chiLd, and Lay.""",
 export (NodePath) var calibration_tree
 
 
+## Currently selected viseme
+var _selected_viseme: int
+
 ## Calibration tree node
 onready var _calibration_tree: CalibrationTree = get_node(calibration_tree)
 
@@ -166,12 +185,37 @@ onready var _calibration_tree: CalibrationTree = get_node(calibration_tree)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_calibration_tree.connect("item_selected", self, "_on_CalibrationTree_item_selected")
+	LipSyncGlobals.connect("file_data_changed", self, "_on_file_data_changed")
+	$VisemeContainer/HBoxContainer/WeightSlider.connect("value_changed", self, "_on_weight_slider_value_changed")
 
 
 func _on_CalibrationTree_item_selected():
-	# Get the phoneme and possibly fingerprint
+	_update_inspector()
+
+
+func _on_file_data_changed(_cause):
+	if _cause != "inspector":
+		_update_inspector()
+
+
+func _on_weight_slider_value_changed(value: float):
+	LipSyncGlobals.file_data.weights[_selected_viseme] = value
+	LipSyncGlobals.set_modified("inspector")
+
+
+func _update_inspector():
+	# Get the selected item
 	var item: TreeItem = _calibration_tree.get_selected()
-	var phoneme: int = item.get_metadata(0)
+	if not item:
+		$VisemeContainer.visible = false
+		$PhonemeDescription.visible = false
+		$FingerprintBars.visible = false
+		$Description.visible = false
+		return
+
+	# Get the phoneme and possibly fingerprint
+	var viseme: int = item.get_metadata(0)[0]
+	var phoneme: int = item.get_metadata(0)[1]
 	var fingerprint: LipSyncFingerprint = item.get_metadata(1)
 
 	# Ensure the description is hidden
@@ -179,7 +223,8 @@ func _on_CalibrationTree_item_selected():
 
 	# Populate selected item
 	if fingerprint:
-		# Hide phoneme description
+		# Hide other inspectors
+		$VisemeContainer.visible = false
 		$PhonemeDescription.visible = false
 
 		# Get scale to normalize volume
@@ -193,12 +238,30 @@ func _on_CalibrationTree_item_selected():
 
 		# Show fingerprint bars
 		$FingerprintBars.visible = true
-	else:
-		# Hide fingerprint bars
+	elif phoneme >= 0:
+		# Hide other inspectors
+		$VisemeContainer.visible = false
 		$FingerprintBars.visible = false
 
 		# Set the text
-		$PhonemeDescription.text = DESCRIPTIONS[phoneme]
+		$PhonemeDescription.text = PHONEME_DESCRIPTIONS[phoneme]
 
 		# Show phoneme description
 		$PhonemeDescription.visible = true
+	else:
+		# Hide other inspectors
+		$PhonemeDescription.visible = false
+		$FingerprintBars.visible = false
+
+		# Set the text and weight
+		$VisemeContainer/VisemeDescription.text = VISEME_DESCRIPTIONS[viseme]
+
+		# Set the selected viseme weight
+		_selected_viseme = viseme
+		var value := 0.0
+		if viseme in LipSyncGlobals.file_data.weights:
+			value = LipSyncGlobals.file_data.weights[viseme]
+		$VisemeContainer/HBoxContainer/WeightSlider.value = value
+
+		# Show viseme description
+		$VisemeContainer.visible = true
